@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+        @font-face {
+            font-family: "JetBrains Mono";
+            src: url("JetBrainsMono-VariableFont_wght.ttf");
+        }
+        body {
+            font-family: "JetBrains Mono",serif;
+            margin: 0;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            text-align: center;
+            width: 98%;
+            z-index: 100;
+            display:block;
+            padding: 10px;
+            color: white;
+            font-size: 25px;
+        }
+        #controls {
+            position: absolute;
+            top: 50px;
+            text-align: center;
+            width: 98%;
+            z-index: 100;
+            display:block;
+            padding: 10px;
+            color: white;
+            font-size: 25px;
+        }
+        button {
+            background-color: white;
+            font-family: "JetBrains Mono",serif;
+            cursor: pointer;
+            border: none;
+            color: black;
+            padding: 10px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<script src="js/main.js" type="module"></script>
+<div id="info">
+    Time:
+</div>
+<div id="controls">
+    <button id="startButton">Mix the cube</button>
+</div>
+</body>
+</html>
