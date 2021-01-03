@@ -4,6 +4,28 @@ import {Vector3} from "../build/three.module.js";
 const loader = new GLTFLoader();
 
 export let cubeObjects;
+let winningList;
+
+const getIdList = () => {
+    return cubeObjects.flat().map(obj => {
+        if (obj) {
+            return obj.uuid
+        } else {
+            return undefined;
+        }
+    });
+}
+
+export const isCorrectlyPieced = () => {
+    let correct = true;
+    const currentPositions = getIdList();
+    for (let i = 0; i < winningList.length; i++) {
+        if (winningList[i] !== currentPositions[i]) {
+            correct = false;
+        }
+    }
+    return correct;
+}
 
 export const renderCube = (scene) => {
     loader.load('./models/cube.glb', function (gltf) {
@@ -51,6 +73,7 @@ export const renderCube = (scene) => {
             ]
         ]
 
+        winningList = getIdList();
 
     }, undefined, function (error) {
 
@@ -831,8 +854,8 @@ const getMiddleVectors = (x, y, point) => {
                 clockwise: false
             }]
         }
-    }else if (x === 0 && y === 7) {
-        if (point.z < - 3.09) {
+    } else if (x === 0 && y === 7) {
+        if (point.z < -3.09) {
             return [{
                 vector: new Vector3(10, 0, 0),
                 direction: 'U',
@@ -854,8 +877,8 @@ const getMiddleVectors = (x, y, point) => {
                 clockwise: false
             }]
         }
-    }else if (x === 1 && y === 0) {
-        if (point.x < - 3.09) {
+    } else if (x === 1 && y === 0) {
+        if (point.x < -3.09) {
             return [{
                 vector: new Vector3(0, 10, 0),
                 direction: 'F',
@@ -877,7 +900,7 @@ const getMiddleVectors = (x, y, point) => {
                 clockwise: false
             }]
         }
-    }else if (x === 1 && y === 2) {
+    } else if (x === 1 && y === 2) {
         if (point.x > 3.09) {
             return [{
                 vector: new Vector3(0, 10, 0),
@@ -900,8 +923,8 @@ const getMiddleVectors = (x, y, point) => {
                 clockwise: true
             }]
         }
-    }else if (x === 1 && y === 6) {
-        if (point.x <- 3.09) {
+    } else if (x === 1 && y === 6) {
+        if (point.x < -3.09) {
             return [{
                 vector: new Vector3(0, 10, 0),
                 direction: 'B',
@@ -923,7 +946,7 @@ const getMiddleVectors = (x, y, point) => {
                 clockwise: true
             }]
         }
-    }else if (x === 1 && y === 8) {
+    } else if (x === 1 && y === 8) {
         if (point.x > 3.09) {
             return [{
                 vector: new Vector3(0, 10, 0),
@@ -946,8 +969,8 @@ const getMiddleVectors = (x, y, point) => {
                 clockwise: false
             }]
         }
-    }else if (x === 2 && y === 1) {
-        if (point.z> 3.09) {
+    } else if (x === 2 && y === 1) {
+        if (point.z > 3.09) {
             return [{
                 vector: new Vector3(10, 0, 0),
                 direction: 'D',
@@ -969,7 +992,7 @@ const getMiddleVectors = (x, y, point) => {
                 clockwise: false
             }]
         }
-    }else if (x === 2 && y ===3) {
+    } else if (x === 2 && y === 3) {
         if (point.x < -3.09) {
             return [{
                 vector: new Vector3(0, 0, 10),
@@ -992,8 +1015,8 @@ const getMiddleVectors = (x, y, point) => {
                 clockwise: false
             }]
         }
-    }else if (x === 2 && y ===5) {
-        if (point.x >3.09) {
+    } else if (x === 2 && y === 5) {
+        if (point.x > 3.09) {
             return [{
                 vector: new Vector3(0, 0, 10),
                 direction: 'D',
@@ -1015,7 +1038,7 @@ const getMiddleVectors = (x, y, point) => {
                 clockwise: true
             }]
         }
-    }else if (x === 2 && y ===7) {
+    } else if (x === 2 && y === 7) {
         if (point.z < -3.09) {
             return [{
                 vector: new Vector3(10, 0, 0),
@@ -1107,7 +1130,7 @@ export const getVectors = (object) => {
     }
 }
 
-export const moveAndSnap = (axis, clockwise) =>{
-    rotateWall(axis, Math.PI / 2 , clockwise);
-    snapRotation(axis,clockwise)
+export const moveAndSnap = (axis, clockwise) => {
+    rotateWall(axis, Math.PI / 2, clockwise);
+    snapRotation(axis, clockwise)
 }
