@@ -1,8 +1,8 @@
-import * as THREE from '../build/three.module.js';
-import {Vector3} from '../build/three.module.js';
-import {OrbitControls} from "../build/OrbitControls.js";
-import {getVectors, isCorrectlyPieced, renderCube, rotateWall, snapRotation} from "./cube.js";
-import {GLTFLoader} from "../build/GLTFLoader.js";
+import * as THREE from '../deps/three.module.js';
+import {Vector3} from '../deps/three.module.js';
+import {OrbitControls} from "../deps/OrbitControls.js";
+import {getVectors, isCorrectlyPieced, lastIssuedMove, renderCube, rotateWall, snapRotation} from "./cube.js";
+import {GLTFLoader} from "../deps/GLTFLoader.js";
 import {showPopup, showResults} from "./popup.js";
 
 
@@ -29,10 +29,10 @@ camera.position.y = 10;
 const container2 = document.getElementById("arrows");
 const renderer2 = new THREE.WebGLRenderer({antialias: true, alpha: true});
 
-renderer2.setSize(200, 200);
+renderer2.setSize(150, 150);
 container2.appendChild(renderer2.domElement);
 const scene2 = new THREE.Scene();
-const camera2 = new THREE.PerspectiveCamera(50, 200 / 200, 1, 1000);
+const camera2 = new THREE.PerspectiveCamera(50, 150 / 150, 1, 1000);
 camera2.up = camera.up;
 
 const light3 = new THREE.AmbientLight(0xFFFFFF);
@@ -40,7 +40,7 @@ scene2.add(light3);
 
 const loader = new GLTFLoader();
 loader.load('./models/marker.glb', function (gltf) {
-    gltf.scene.scale.multiplyScalar(60)
+    gltf.scene.scale.multiplyScalar(80)
     gltf.scene.position.x = 0; // once rescaled, position the model where needed
     gltf.scene.position.z = 0;
     scene2.add(gltf.scene);
@@ -132,6 +132,8 @@ document.onpointermove = (event) => {
                     maxObject = vector;
                 }
             })
+            document.getElementById("back").style.display = "block";
+
 
             animationDirection = maxObject.direction;
             animationClockwise = maxObject.clockwise;
@@ -142,7 +144,7 @@ document.onpointermove = (event) => {
 }
 
 let move = 0;
-const maxMoves = 2;
+const maxMoves = 30;
 let isMixing = false;
 let startTimeout;
 let gameTimeout;
@@ -184,6 +186,7 @@ function mixUp() {
         } else if (move === maxMoves) {
             isMixing = false;
             inGame = true;
+            document.getElementById("suggestion").style.display = "block";
             document.getElementById("info").textContent = "Mixed!";
             secondsLeft = 3;
             startTimeout = setTimeout(start, 1000);
@@ -229,6 +232,30 @@ function onWindowResize() {
 document.getElementById("startButton").onclick = startMix;
 document.getElementById("info").textContent = "Welcome to rubik's cube game";
 
+function goBack() {
+    if (lastIssuedMove) {
+        animationClockwise = !lastIssuedMove.clockwise;
+        animationDirection = lastIssuedMove.wall;
+        animationLock = true;
+    }
+}
+
+document.getElementById("back").addEventListener("click", () => {
+    goBack();
+});
+
+let resultsExpanded = false;
+document.getElementById("showResults").addEventListener("click", () => {
+    resultsExpanded = !resultsExpanded;
+    if(resultsExpanded){
+        document.getElementById("showResults").textContent = "Hide Results";
+        document.getElementById("results").style.transform= "translateX(0) translateY(0)";
+    } else {
+        document.getElementById("showResults").textContent = "Show Results";
+        document.getElementById("results").style.transform= "translateX(-100%) translateY(0)";
+    }
+    console.log(resultsExpanded)
+});
 
 animate();
 showResults();

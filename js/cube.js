@@ -1,10 +1,21 @@
-import {GLTFLoader} from "../build/GLTFLoader.js";
-import {Vector3} from "../build/three.module.js";
+import {GLTFLoader} from "../deps/GLTFLoader.js";
+import {Vector3} from "../deps/three.module.js";
 
 const loader = new GLTFLoader();
 
 export let cubeObjects;
 let winningList;
+const cube = new Cube();
+Cube.asyncInit("../kostka/deps/worker.js", () => {
+    console.log("Initialized");
+});
+document.getElementById("loading").style.display = "none";
+let lastSuggestedMove = "";
+let currentSuggestedAlgorithm = "";
+export let lastIssuedMove = {
+    wall: null,
+    clockwise: null
+};
 
 const getIdList = () => {
     return cubeObjects.flat().map(obj => {
@@ -179,6 +190,38 @@ export const rotateWall = (wall, angle, clockwise = true) => {
 }
 
 export const snapRotation = (wall, clockwise = true) => {
+    cube.move(`${wall}${clockwise ? "" : "'"}`);
+    lastIssuedMove = {
+        wall: wall,
+        clockwise: clockwise
+    }
+
+    if (!cube.isSolved()) {
+        const moveToTest = (' ' + lastSuggestedMove).slice(1);
+        if (`${wall}${clockwise ? "" : "'"}` !== moveToTest.replace("2", "")) {
+            Cube._asyncSolve(cube, (algorithm) => {
+                const phases = algorithm.split(" ");
+
+                document.getElementById("move").textContent = phases[0];
+                lastSuggestedMove = phases[0];
+                currentSuggestedAlgorithm = phases.slice(1, phases.length).join(" ");
+            })
+        } else {
+            const phases = currentSuggestedAlgorithm.split(" ");
+            if (lastSuggestedMove.includes("2")) {
+                document.getElementById("move").textContent = lastSuggestedMove.replace("2", "");
+                lastSuggestedMove = lastSuggestedMove.replace("2", "");
+            } else {
+                document.getElementById("move").textContent = phases[0];
+                lastSuggestedMove = phases[0];
+                currentSuggestedAlgorithm = phases.slice(1, phases.length).join(" ");
+            }
+
+        }
+    } else {
+        document.getElementById("move").textContent = "-";
+    }
+
 
     if (wall.toUpperCase() === 'F' && clockwise) {
         let temp = cubeObjects[0][2];
